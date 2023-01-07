@@ -40,14 +40,21 @@ def explain_model_prediction_shap(data):
     return p, shap_values 
 
 # explain model prediction Lime results
-def explain_model_prediction_lime(data):
-    explainer = LimeTabularExplainer(
+def explain_model_prediction_lime(data, client):
+    explaine_ = lime.lime_tabular.LimeTabularExplainer(
         data,
         feature_names=feature_names,
         class_names=['no_risk','risked'],
         mode = 'classification')
     
-    instance = data
+    instance = data.iloc[client]
+    explanation = explainer_.explain_instance(
+    instance,
+    classifier.predict_proba,
+    num_features=10,
+    top_labels=1 )
+    
+    return explanation
     
     
 # get the data of the selected customer
@@ -104,12 +111,16 @@ def main():
             shap_values_ttl = explainer(X) 
             fig_ttl = shap.plots.bar(shap_values_ttl, max_display=10)
             st.pyplot(fig_ttl)
+            
+            explain_model_prediction_lime(df, Customer)
+            explanation.show_in_notebook(show_all=False)
     
     
-    with st.sidebar.container():
-        selected_feature = st.sidebar.selectbox('Selectionner une feature', feature_names)
-        if st.sidebar.button('display'):
-            st.bar_chart(df.groupby("TARGET")[selected_feature].value_counts())
+    select = st.sidebar.checkbox('Features')
+    if select:
+            selected_feature = st.sidebar.selectbox('Selectionner une feature', feature_names)
+            if st.sidebar.button('display'):
+                st.bar_chart(df.groupby("TARGET").selected_feature.value_counts())
             
 if __name__=='__main__':
     main() 
