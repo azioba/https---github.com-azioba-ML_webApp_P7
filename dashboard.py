@@ -25,7 +25,7 @@ X = df.drop(columns=['TARGET'])
 feature_names = X.columns
 
 # Pickle
-with open("classifier.sav","rb") as pickle_in:
+with open("classifier.pkl","rb") as pickle_in:
     classifier = pickle.load(pickle_in)
     
 explainer = shap.TreeExplainer(classifier, X, feature_names=feature_names)
@@ -77,6 +77,9 @@ def request_prediction(URI, data):
     result = {'prediction':prediction, 'probability' : probability}
     return  result
 
+def best_classification(probas, threshold, X):
+    y_pred = 1 if probas > threshold else 0 
+    return y_pred
 
 def main():
     
@@ -97,13 +100,15 @@ def main():
             result = request_prediction(URI, data)
             score = result['prediction']
             prob = result['probability']
-            if (score == 1):
+            y_pred = best_classification(prob, 0.3918, data)
+            if (y_pred == 1):
                 risk_assessment = "Crédit refusé"
             else:
                 risk_assessment = "Crédit accepté"
             st.sidebar.success(risk_assessment)
             st.sidebar.write("Prediction: ", int(score))
-            st.sidebar.write("Probability: ", round(float(prob),3))
+            st.sidebar.write("Probability: ", round(float(prob),4))
+            st.sidebar.write("y_pred best threshold: ", y_pred)
             st.subheader('Result Interpretability - Applicant Level')
             p, shap_values = explain_model_prediction_shap(data) 
             st.pyplot(p)
