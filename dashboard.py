@@ -116,8 +116,10 @@ def main():
             shap_values_ttl = explainer(X) 
             fig_ttl = shap.plots.bar(shap_values_ttl, max_display=10)
             st.pyplot(fig_ttl)
+            st.pyplot(shap.summary_plot(shap.TreeExplainer(classifier).shap_values((X)), X, plot_type="bar"))
             
-            explain_model_prediction_lime(df, Customer)
+            
+            explanation = explain_model_prediction_lime(df, Customer)
             explanation.show_in_notebook(show_all=False)
     
     
