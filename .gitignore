@@ -8,3 +8,4 @@ mlflow_model/MLmodel
 mlflow_model/model.pkl
 mlflow_model/python_env.yaml
 mlflow_model/requirements.txt
+__pycache__
