@@ -9,3 +9,4 @@ mlflow_model/model.pkl
 mlflow_model/python_env.yaml
 mlflow_model/requirements.txt
 __pycache__
+requir.txt
